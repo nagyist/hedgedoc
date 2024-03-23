@@ -41,14 +41,14 @@ export class Identity {
   providerType: string;
 
   /**
-   * The name of the provider.
-   * Only set if there are multiple provider of that type (e.g. gitlab)
+   * The identifier of the provider.
+   * Only set if there are multiple provider of that type (e.g. OIDC)
    */
   @Column({
     nullable: true,
     type: 'text',
   })
-  providerName: string | null;
+  providerIdentifier: string | null;
 
   /**
    * If the identity should be used as the sync source.
@@ -79,15 +79,6 @@ export class Identity {
   providerUserId: string | null;
 
   /**
-   * Token used to access the OAuth provider in the users name.
-   */
-  @Column({
-    nullable: true,
-    type: 'text',
-  })
-  oAuthAccessToken: string | null;
-
-  /**
    * The hash of the password
    * Only set when the type of the identity is local
    */
@@ -105,10 +96,9 @@ export class Identity {
     const newIdentity = new Identity();
     newIdentity.user = Promise.resolve(user);
     newIdentity.providerType = providerType;
-    newIdentity.providerName = null;
+    newIdentity.providerIdentifier = null;
     newIdentity.syncSource = syncSource;
     newIdentity.providerUserId = null;
-    newIdentity.oAuthAccessToken = null;
     newIdentity.passwordHash = null;
     return newIdentity;
   }

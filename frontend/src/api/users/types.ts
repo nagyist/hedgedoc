@@ -9,3 +9,7 @@ export interface UserInfo {
   displayName: string
   photoUrl: string
 }
+
+export interface FullUserInfo extends UserInfo {
+  email: string
+}

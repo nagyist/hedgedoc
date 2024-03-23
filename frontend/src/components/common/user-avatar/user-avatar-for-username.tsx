@@ -35,8 +35,12 @@ export const UserAvatarForUsername: React.FC<UserAvatarForUsernameProps> = ({ us
   }, [username, t])
 
   const avatar = useMemo(() => {
-    return !value ? <Fragment /> : <UserAvatar displayName={value.displayName} photoUrl={value.photo} {...props} />
-  }, [props, value])
+    return !value ? (
+      <Fragment />
+    ) : (
+      <UserAvatar displayName={value.displayName} photoUrl={value.photo} username={username} {...props} />
+    )
+  }, [props, value, username])
 
   return (
     <AsyncLoadingBoundary loading={loading || !value} error={error} componentName={'UserAvatarForUsername'}>

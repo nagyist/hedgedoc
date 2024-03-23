@@ -22,12 +22,6 @@ export const branding = {
 
 export const authProviders = [
   {
-    type: AuthProviderType.GITHUB
-  },
-  {
-    type: AuthProviderType.GOOGLE
-  },
-  {
     type: AuthProviderType.LOCAL
   },
   {
@@ -36,19 +30,9 @@ export const authProviders = [
     providerName: 'Test LDAP'
   },
   {
-    type: AuthProviderType.OAUTH2,
-    identifier: 'test-oauth2',
-    providerName: 'Test OAuth2'
-  },
-  {
-    type: AuthProviderType.SAML,
-    identifier: 'test-saml',
-    providerName: 'Test SAML'
-  },
-  {
-    type: AuthProviderType.GITLAB,
-    identifier: 'test-gitlab',
-    providerName: 'Test GitLab'
+    type: AuthProviderType.OIDC,
+    identifier: 'test-oidc',
+    providerName: 'Test OIDC'
   }
 ]
 

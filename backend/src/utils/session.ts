@@ -27,7 +27,7 @@ export function setupSessionMiddleware(
       name: HEDGEDOC_SESSION,
       secret: authConfig.session.secret,
       cookie: {
-        maxAge: authConfig.session.lifetime,
+        maxAge: authConfig.session.lifetime * 1000,
       },
       resave: false,
       saveUninitialized: false,

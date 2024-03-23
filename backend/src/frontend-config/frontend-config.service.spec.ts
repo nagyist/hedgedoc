@@ -48,30 +48,9 @@ describe('FrontendConfigService', () => {
     },
     gitlab: [],
     ldap: [],
-    saml: [],
-    oauth2: [],
   };
 
   describe('getAuthProviders', () => {
-    const github: AuthConfig['github'] = {
-      clientID: 'githubTestId',
-      clientSecret: 'githubTestSecret',
-    };
-    const google: AuthConfig['google'] = {
-      clientID: 'googleTestId',
-      clientSecret: 'googleTestSecret',
-      apiKey: 'googleTestKey',
-    };
-    const gitlab: AuthConfig['gitlab'] = [
-      {
-        identifier: 'gitlabTestIdentifier',
-        providerName: 'gitlabTestName',
-        baseURL: 'gitlabTestUrl',
-        clientID: 'gitlabTestId',
-        clientSecret: 'gitlabTestSecret',
-        scope: GitlabScope.API,
-      },
-    ];
     const ldap: AuthConfig['ldap'] = [
       {
         identifier: 'ldapTestIdentifier',
@@ -88,53 +67,16 @@ describe('FrontendConfigService', () => {
         tlsCaCerts: ['ldapTestTlsCa'],
       },
     ];
-    const saml: AuthConfig['saml'] = [
+    const oidc: AuthConfig['oidc'] = [
       {
-        identifier: 'samlTestIdentifier',
-        providerName: 'samlTestName',
-        idpSsoUrl: 'samlTestUrl',
-        idpCert: 'samlTestCert',
-        clientCert: 'samlTestClientCert',
-        issuer: 'samlTestIssuer',
-        identifierFormat: 'samlTestUrl',
-        disableRequestedAuthnContext: 'samlTestUrl',
-        groupAttribute: 'samlTestUrl',
-        requiredGroups: ['samlTestUrl'],
-        externalGroups: ['samlTestUrl'],
-        attribute: {
-          id: 'samlTestUrl',
-          username: 'samlTestUrl',
-          email: 'samlTestUrl',
-        },
+        identifier: 'oidcTestIdentifier',
+        providerName: 'oidcTestProviderName',
+        issuer: 'oidcTestIssuer',
+        clientID: 'oidcTestId',
+        clientSecret: 'oidcTestSecret',
       },
     ];
-    const oauth2: AuthConfig['oauth2'] = [
-      {
-        identifier: 'oauth2Testidentifier',
-        providerName: 'oauth2TestName',
-        baseURL: 'oauth2TestUrl',
-        userProfileURL: 'oauth2TestProfileUrl',
-        userProfileIdAttr: 'oauth2TestProfileId',
-        userProfileUsernameAttr: 'oauth2TestProfileUsername',
-        userProfileDisplayNameAttr: 'oauth2TestProfileDisplay',
-        userProfileEmailAttr: 'oauth2TestProfileEmail',
-        tokenURL: 'oauth2TestTokenUrl',
-        authorizationURL: 'oauth2TestAuthUrl',
-        clientID: 'oauth2TestId',
-        clientSecret: 'oauth2TestSecret',
-        scope: 'oauth2TestScope',
-        rolesClaim: 'oauth2TestRoles',
-        accessRole: 'oauth2TestAccess',
-      },
-    ];
-    for (const authConfigConfigured of [
-      github,
-      google,
-      gitlab,
-      ldap,
-      saml,
-      oauth2,
-    ]) {
+    for (const authConfigConfigured of [ldap, oidc]) {
       it(`works with ${JSON.stringify(authConfigConfigured)}`, async () => {
         const appConfig: AppConfig = {
           baseUrl: domain,
@@ -182,16 +124,6 @@ describe('FrontendConfigService', () => {
         }).compile();
         const service = module.get(FrontendConfigService);
         const config = await service.getFrontendConfig();
-        if (authConfig.google.clientID) {
-          expect(config.authProviders).toContainEqual({
-            type: AuthProviderType.GOOGLE,
-          });
-        }
-        if (authConfig.github.clientID) {
-          expect(config.authProviders).toContainEqual({
-            type: AuthProviderType.GITHUB,
-          });
-        }
         if (authConfig.local.enableLogin) {
           expect(config.authProviders).toContainEqual({
             type: AuthProviderType.LOCAL,
@@ -199,35 +131,14 @@ describe('FrontendConfigService', () => {
         }
         expect(
           config.authProviders.filter(
-            (provider) => provider.type === AuthProviderType.GITLAB,
-          ).length,
-        ).toEqual(authConfig.gitlab.length);
-        expect(
-          config.authProviders.filter(
             (provider) => provider.type === AuthProviderType.LDAP,
           ).length,
         ).toEqual(authConfig.ldap.length);
         expect(
           config.authProviders.filter(
-            (provider) => provider.type === AuthProviderType.SAML,
+            (provider) => provider.type === AuthProviderType.OIDC,
           ).length,
-        ).toEqual(authConfig.saml.length);
-        expect(
-          config.authProviders.filter(
-            (provider) => provider.type === AuthProviderType.OAUTH2,
-          ).length,
-        ).toEqual(authConfig.oauth2.length);
-        if (authConfig.gitlab.length > 0) {
-          expect(
-            config.authProviders.find(
-              (provider) => provider.type === AuthProviderType.GITLAB,
-            ),
-          ).toEqual({
-            type: AuthProviderType.GITLAB,
-            providerName: authConfig.gitlab[0].providerName,
-            identifier: authConfig.gitlab[0].identifier,
-          });
-        }
+        ).toEqual(authConfig.oidc.length);
         if (authConfig.ldap.length > 0) {
           expect(
             config.authProviders.find(
@@ -239,26 +150,15 @@ describe('FrontendConfigService', () => {
             identifier: authConfig.ldap[0].identifier,
           });
         }
-        if (authConfig.saml.length > 0) {
+        if (authConfig.oidc.length > 0) {
           expect(
             config.authProviders.find(
-              (provider) => provider.type === AuthProviderType.SAML,
+              (provider) => provider.type === AuthProviderType.OIDC,
             ),
           ).toEqual({
-            type: AuthProviderType.SAML,
-            providerName: authConfig.saml[0].providerName,
-            identifier: authConfig.saml[0].identifier,
-          });
-        }
-        if (authConfig.oauth2.length > 0) {
-          expect(
-            config.authProviders.find(
-              (provider) => provider.type === AuthProviderType.OAUTH2,
-            ),
-          ).toEqual({
-            type: AuthProviderType.OAUTH2,
-            providerName: authConfig.oauth2[0].providerName,
-            identifier: authConfig.oauth2[0].identifier,
+            type: AuthProviderType.OIDC,
+            providerName: authConfig.oidc[0].providerName,
+            identifier: authConfig.oidc[0].identifier,
           });
         }
       });

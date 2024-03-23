@@ -19,3 +19,15 @@ export interface ChangePasswordDto {
   currentPassword: string
   newPassword: string
 }
+
+export interface LogoutResponseDto {
+  redirect: string
+}
+
+export interface UsernameCheckDto {
+  username: string
+}
+
+export interface UsernameCheckResponseDto {
+  usernameAvailable: boolean
+}

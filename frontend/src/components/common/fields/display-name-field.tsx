@@ -8,6 +8,7 @@ import type { CommonFieldProps } from './fields'
 import React, { useMemo } from 'react'
 import { Form } from 'react-bootstrap'
 import { Trans } from 'react-i18next'
+import { useFrontendConfig } from '../frontend-config-context/use-frontend-config'
 
 interface DisplayNameFieldProps extends CommonFieldProps {
   initialValue?: string
@@ -23,6 +24,7 @@ interface DisplayNameFieldProps extends CommonFieldProps {
 export const DisplayNameField: React.FC<DisplayNameFieldProps> = ({ onChange, value, initialValue }) => {
   const isValid = useMemo(() => value.trim() !== '' && value !== initialValue, [value, initialValue])
   const placeholderText = useTranslatedText('profile.displayName')
+  const profileEditsAllowed = useFrontendConfig().allowProfileEdits
 
   return (
     <Form.Group>
@@ -37,6 +39,7 @@ export const DisplayNameField: React.FC<DisplayNameFieldProps> = ({ onChange, va
         onChange={onChange}
         placeholder={placeholderText}
         autoComplete='name'
+        disabled={!profileEditsAllowed}
         required
       />
       <Form.Text>

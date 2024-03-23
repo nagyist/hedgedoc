@@ -3,10 +3,11 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import AuthConfiguration, { AuthConfig } from '../config/auth.config';
 import { AlreadyInDBError, NotInDBError } from '../errors/errors';
 import { ConsoleLoggerService } from '../logger/console-logger.service';
 import { Username } from '../utils/username';
@@ -22,6 +23,8 @@ import { User } from './user.entity';
 export class UsersService {
   constructor(
     private readonly logger: ConsoleLoggerService,
+    @Inject(AuthConfiguration.KEY)
+    private authConfig: AuthConfig,
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {
     this.logger.setContext(UsersService.name);
@@ -33,9 +36,15 @@ export class UsersService {
    * @param {Username} username - the username the new user shall have
    * @param {string} displayName - the display name the new user shall have
    * @return {User} the user
+   * @throws {BadRequestException} if the username contains invalid characters or is too short
    * @throws {AlreadyInDBError} the username is already taken.
    */
   async createUser(username: Username, displayName: string): Promise<User> {
+    if (!/^[a-zA-Z0-9_.]{3,64}$/.test(username)) {
+      throw new BadRequestException(
+        `The username '${username}' is not a valid username.`,
+      );
+    }
     const user = User.create(username, displayName);
     try {
       return await this.userRepository.save(user);
@@ -71,8 +80,24 @@ export class UsersService {
    * @param displayName - the new displayName
    */
   async changeDisplayName(user: User, displayName: string): Promise<void> {
+    if (!this.authConfig.common.allowProfileEdits) {
+      throw new BadRequestException('Profile edits are not allowed');
+    }
     user.displayName = displayName;
     await this.userRepository.save(user);
+  }
+
+  /**
+   * @async
+   * Checks if the user with the specified username exists
+   * @param username - the username to check
+   * @return {boolean} true if the user exists, false otherwise
+   */
+  async checkIfUserExists(username: Username): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      where: { username: username },
+    });
+    return user !== null;
   }
 
   /**

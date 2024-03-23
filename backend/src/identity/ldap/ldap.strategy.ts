@@ -150,7 +150,11 @@ export class LdapStrategy extends PassportStrategy(Strategy, 'ldap') {
     username: string, // This is not of type Username, because LDAP server may use mixed case usernames
   ): void {
     this.identityService
-      .getIdentityFromUserIdAndProviderType(userId, ProviderType.LDAP)
+      .getIdentityFromUserIdAndProviderType(
+        userId,
+        ProviderType.LDAP,
+        ldapConfig.identifier,
+      )
       .then(async (identity) => {
         await this.updateIdentity(
           identity,

@@ -40,30 +40,14 @@ const initialConfig: FrontendConfig = {
       type: AuthProviderType.LOCAL
     },
     {
-      type: AuthProviderType.GITHUB
-    },
-    {
-      type: AuthProviderType.GOOGLE
-    },
-    {
       type: AuthProviderType.LDAP,
       identifier: 'test-ldap',
       providerName: 'Test LDAP'
     },
     {
-      type: AuthProviderType.GITLAB,
-      identifier: 'test-gitlab',
-      providerName: 'Test GitLab'
-    },
-    {
-      type: AuthProviderType.OAUTH2,
-      identifier: 'test-oauth2',
-      providerName: 'Test OAuth2'
-    },
-    {
-      type: AuthProviderType.SAML,
-      identifier: 'test-saml',
-      providerName: 'Test SAML'
+      type: AuthProviderType.OIDC,
+      identifier: 'test-oidc',
+      providerName: 'Test OIDC'
     }
   ]
 }

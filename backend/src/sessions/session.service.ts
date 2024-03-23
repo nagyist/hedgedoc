@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2023 The HedgeDoc developers (see AUTHORS file)
+ * SPDX-FileCopyrightText: 2024 The HedgeDoc developers (see AUTHORS file)
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -10,6 +10,7 @@ import { TypeormStore } from 'connect-typeorm';
 import { parse as parseCookie } from 'cookie';
 import { unsign } from 'cookie-signature';
 import { IncomingMessage } from 'http';
+import { UserinfoResponse } from 'openid-client';
 import { Repository } from 'typeorm';
 
 import authConfiguration, { AuthConfig } from '../config/auth.config';
@@ -17,6 +18,7 @@ import { DatabaseType } from '../config/database-type.enum';
 import databaseConfiguration, {
   DatabaseConfig,
 } from '../config/database.config';
+import { ProviderType } from '../identity/provider-type.enum';
 import { ConsoleLoggerService } from '../logger/console-logger.service';
 import { HEDGEDOC_SESSION } from '../utils/session';
 import { Username } from '../utils/username';
@@ -25,7 +27,11 @@ import { Session } from './session.entity';
 export interface SessionState {
   cookie: unknown;
   username?: Username;
-  authProvider: string;
+  authProviderType?: ProviderType;
+  authProviderIdentifier?: string;
+  oidcAccessToken?: string;
+  oidcLoginCode?: string;
+  newUserData?: UserinfoResponse;
 }
 
 /**

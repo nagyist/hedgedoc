@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2023 The HedgeDoc developers (see AUTHORS file)
+ * SPDX-FileCopyrightText: 2024 The HedgeDoc developers (see AUTHORS file)
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -16,7 +16,7 @@ import { UserRelationEnum } from '../../users/user-relation.enum';
 import { User } from '../../users/user.entity';
 import { UsersService } from '../../users/users.service';
 import { Username } from '../../utils/username';
-import { IdentityService } from '../identity.service';
+import { LocalIdentityService } from './local-identity.service';
 
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {}
@@ -26,7 +26,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   constructor(
     private readonly logger: ConsoleLoggerService,
     private userService: UsersService,
-    private identityService: IdentityService,
+    private localIdentityService: LocalIdentityService,
   ) {
     super();
     logger.setContext(LocalStrategy.name);
@@ -37,7 +37,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
       const user = await this.userService.getUserByUsername(username, [
         UserRelationEnum.IDENTITIES,
       ]);
-      await this.identityService.checkLocalPassword(user, password);
+      await this.localIdentityService.checkLocalPassword(user, password);
       return user;
     } catch (e) {
       if (

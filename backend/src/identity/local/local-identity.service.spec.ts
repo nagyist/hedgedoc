@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2022 The HedgeDoc developers (see AUTHORS file)
+ * SPDX-FileCopyrightText: 2024 The HedgeDoc developers (see AUTHORS file)
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -8,22 +8,22 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import appConfigMock from '../config/mock/app.config.mock';
-import authConfigMock from '../config/mock/auth.config.mock';
+import appConfigMock from '../../config/mock/app.config.mock';
+import authConfigMock from '../../config/mock/auth.config.mock';
 import {
   InvalidCredentialsError,
   NoLocalIdentityError,
   PasswordTooWeakError,
-} from '../errors/errors';
-import { LoggerModule } from '../logger/logger.module';
-import { User } from '../users/user.entity';
-import { checkPassword, hashPassword } from '../utils/password';
-import { Identity } from './identity.entity';
-import { IdentityService } from './identity.service';
-import { ProviderType } from './provider-type.enum';
+} from '../../errors/errors';
+import { LoggerModule } from '../../logger/logger.module';
+import { User } from '../../users/user.entity';
+import { checkPassword, hashPassword } from '../../utils/password';
+import { Identity } from '../identity.entity';
+import { ProviderType } from '../provider-type.enum';
+import { LocalIdentityService } from './local-identity.service';
 
-describe('IdentityService', () => {
-  let service: IdentityService;
+describe('LocalIdentityService', () => {
+  let service: LocalIdentityService;
   let user: User;
   let identityRepo: Repository<Identity>;
   const password = 'AStrongPasswordToStartWith123';
@@ -31,7 +31,7 @@ describe('IdentityService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        IdentityService,
+        LocalIdentityService,
         {
           provide: getRepositoryToken(Identity),
           useClass: Repository,
@@ -46,7 +46,7 @@ describe('IdentityService', () => {
       ],
     }).compile();
 
-    service = module.get<IdentityService>(IdentityService);
+    service = module.get<LocalIdentityService>(LocalIdentityService);
     user = User.create('test', 'Testy') as User;
     identityRepo = module.get<Repository<Identity>>(
       getRepositoryToken(Identity),

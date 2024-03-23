@@ -29,6 +29,7 @@ export const UsernameField: React.FC<UsernameFieldProps> = ({ onChange, value, i
       type='text'
       size='sm'
       value={value}
+      maxLength={64}
       isValid={isValid}
       isInvalid={isInvalid}
       onChange={onChange}

@@ -5,24 +5,24 @@
  */
 import { useMemo } from 'react'
 import { createAvatar } from '@dicebear/core'
-import * as identicon from '@dicebear/identicon'
+import { identicon } from '@dicebear/collection'
 
 /**
  * Returns the correct avatar url for a user.
  * When an empty or no photoUrl is given, a random avatar is generated from the displayName.
  *
  * @param photoUrl The photo url of the user to use. Maybe empty or not set.
- * @param displayName The display name of the user to use as input to the random avatar.
+ * @param username The username of the user to use as input to the random avatar.
  * @return The correct avatar url for the user.
  */
-export const useAvatarUrl = (photoUrl: string | undefined, displayName: string): string => {
+export const useAvatarUrl = (photoUrl: string | undefined, username: string): string => {
   return useMemo(() => {
     if (photoUrl && photoUrl.trim() !== '') {
       return photoUrl
     }
     const avatar = createAvatar(identicon, {
-      seed: displayName
+      seed: username
     })
     return avatar.toDataUriSync()
-  }, [photoUrl, displayName])
+  }, [photoUrl, username])
 }
